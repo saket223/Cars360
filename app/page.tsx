@@ -5,7 +5,7 @@ import { FilterProps, HomeProps } from "@types";
 
 export async function getServerSideProps(context: { query: FilterProps }) {
   const { query } = context;
-
+  
   // Fetch cars based on the query parameters
   const allCars = await fetchCars({
     manufacturer: query.manufacturer || "",
@@ -39,8 +39,7 @@ export default async function Home({ searchParams }: HomeProps) {
   const isDataEmpty = !Array.isArray(allCars) || allCars.length < 1;
 
   // Check if it's an error object
-  const isError =
-    !Array.isArray(allCars) && (allCars as { message: string }).message;
+  const isError = !Array.isArray(allCars) && (allCars as { message: string }).message;
 
   return (
     <main className="overflow-hidden">
@@ -77,11 +76,7 @@ export default async function Home({ searchParams }: HomeProps) {
         ) : (
           <div className="home__error-container">
             <h2 className="text-black text-xl font-bold">Oops, no results</h2>
-            <p>
-              {isError
-                ? (allCars as { message: string }).message
-                : "No cars found matching your criteria."}
-            </p>
+            <p>{isError ? (allCars as { message: string }).message : "No cars found matching your criteria."}</p>
           </div>
         )}
       </div>
