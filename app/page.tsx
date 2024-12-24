@@ -1,30 +1,7 @@
 import { fetchCars } from "@utils";
+import { HomeProps } from "@types";
 import { fuels, yearsOfProduction } from "@constants";
 import { CarCard, ShowMore, SearchBar, CustomFilter, Hero } from "@components";
-import { FilterProps, HomeProps } from "@types";
-
-export async function getServerSideProps(context: { query: FilterProps }) {
-  const { query } = context;
-  
-  // Fetch cars based on the query parameters
-  const allCars = await fetchCars({
-    manufacturer: query.manufacturer || "",
-    year: query.year || 2022,
-    fuel: query.fuel || "",
-    limit: query.limit || 10,
-    model: query.model || "",
-  });
-
-  const isDataEmpty = !Array.isArray(allCars) || allCars.length < 1;
-
-  return {
-    props: {
-      allCars,
-      isDataEmpty,
-      searchParams: query, // passing the searchParams as props
-    },
-  };
-}
 
 export default async function Home({ searchParams }: HomeProps) {
   const allCars = await fetchCars({
@@ -35,11 +12,8 @@ export default async function Home({ searchParams }: HomeProps) {
     model: searchParams.model || "",
   });
 
-  // Type guard for allCars to check if it's an array
+  // Check if data is empty
   const isDataEmpty = !Array.isArray(allCars) || allCars.length < 1;
-
-  // Check if it's an error object
-  const isError = !Array.isArray(allCars) && (allCars as { message: string }).message;
 
   return (
     <main className="overflow-hidden">
@@ -48,7 +22,7 @@ export default async function Home({ searchParams }: HomeProps) {
       <div className="mt-12 padding-x padding-y max-width" id="discover">
         <div className="home__text-container">
           <h1 className="text-4xl font-extrabold">Car Catalogue</h1>
-          <p>Explore our cars you might like</p>
+          <p>Explore out cars you might like</p>
         </div>
 
         <div className="home__filters">
@@ -60,11 +34,11 @@ export default async function Home({ searchParams }: HomeProps) {
           </div>
         </div>
 
-        {!isDataEmpty && !isError ? (
+        {!isDataEmpty ? (
           <section>
             <div className="home__cars-wrapper">
-              {allCars.map((car, index) => (
-                <CarCard key={index} car={car} />
+              {allCars?.map((car) => (
+                <CarCard key={car.id} car={car} /> // Ensure each car has a unique key
               ))}
             </div>
 
@@ -76,7 +50,8 @@ export default async function Home({ searchParams }: HomeProps) {
         ) : (
           <div className="home__error-container">
             <h2 className="text-black text-xl font-bold">Oops, no results</h2>
-            <p>{isError ? (allCars as { message: string }).message : "No cars found matching your criteria."}</p>
+            {/* Provide fallback message if `allCars` is not empty */}
+            <p>No cars found with the selected filters.</p>
           </div>
         )}
       </div>
