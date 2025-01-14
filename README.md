@@ -8,13 +8,6 @@ Make sure you have the following installed on your machine:
 - [Node.js](https://nodejs.org/en)
 - [npm](https://www.npmjs.com/)
 
-**Cloning the Repository**
-
-```bash
-git clone https://github.com/adrianhajdin/project_next13_car_showcase.git
-cd project_next13_car_showcase
-```
-
 **Installation**
 
 Install the project dependencies using npm:
